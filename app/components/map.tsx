@@ -203,7 +203,7 @@ const Map: React.FC = () => {
             <div id="controls" className="flex flex-wrap justify-center space-x-5 mb-4 controls bg-slate-500 p-4 rounded-xl shadow-md">
                 <div className="mt-1">
                     <fieldset className="text-white">
-                        <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" />
+                        <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" defaultChecked />
                         <label htmlFor="nodeMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/node:bg-slate-800 rounded-xl p-2">Create Nodes</label>
 
                         <input type="radio" id="edgeMode" name="mode" value="edge" className="hidden peer/edge" />
