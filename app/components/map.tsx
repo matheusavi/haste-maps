@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import Hints from './hints';
 import cytoscape from 'cytoscape';
 import cyCanvas from 'cytoscape-canvas';
 
@@ -197,7 +198,6 @@ const Map: React.FC = () => {
 
         };
     }, []);
-
     return (
         <div className="flex flex-col items-center">
             <div id="controls" className="flex flex-wrap justify-center space-x-5 mb-4 controls bg-slate-500 p-4 rounded-xl shadow-md">
@@ -223,6 +223,7 @@ const Map: React.FC = () => {
                     <input type="file" id="bgImageUpload" accept="image/*" className="hidden" />
                 </div>
             </div>
+            <Hints />
             <div id="cy" ref={cyRef} style={{ position: 'fixed', top: '0', right: '0', bottom: '0', left: '0', zIndex: '1' }} className="bg-slate-800"></div>
         </div>
     );
