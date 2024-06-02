@@ -39,7 +39,7 @@ const Map: React.FC = () => {
                             'line-color': '#0074D9',
                             'target-arrow-color': '#0074D9',
                             'target-arrow-shape': 'triangle',
-                            'label': 'data(label)',
+                            'label': '',
                             'color': '#fff',
                             'text-rotation': 'autorotate',
                             'font-size': 12,
@@ -200,30 +200,30 @@ const Map: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center">
-            <div id="controls" className="flex flex-wrap justify-center space-x-4 mb-4 controls bg-transparent">
-                <fieldset>
-                    <div>
-                        <input type="radio" id="nodeMode" name="mode" value="node" />
-                        <label htmlFor="nodeMode">Create Nodes</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="edgeMode" name="mode" value="edge" />
-                        <label htmlFor="edgeMode">Create Edges</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" />
-                        <label htmlFor="shortestPathMode">Find Shortest Path</label>
-                    </div>
-                </fieldset>
-                <label
-                    htmlFor="bgImageUpload"
-                    className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
-                >
-                    Upload Image
-                </label>
-                <input type="file" id="bgImageUpload" accept="image/*" className="hidden" />
+            <div id="controls" className="flex flex-wrap justify-center space-x-5 mb-4 controls bg-slate-500 p-4 rounded-xl shadow-md">
+                <div className="mt-1">
+                    <fieldset className="text-white">
+                        <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" />
+                        <label htmlFor="nodeMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/node:bg-slate-800 rounded-xl p-2">Create Nodes</label>
+
+                        <input type="radio" id="edgeMode" name="mode" value="edge" className="hidden peer/edge" />
+                        <label htmlFor="edgeMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/edge:bg-slate-800 rounded-xl p-2">Create Edges</label>
+
+                        <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" className="hidden peer/shortestPath" />
+                        <label htmlFor="shortestPathMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/shortestPath:bg-slate-800 rounded-xl p-2">Find Shortest Path</label>
+                    </fieldset>
+                </div>
+                <div className="mt-1">
+                    <label
+                        htmlFor="bgImageUpload"
+                        className="cursor-pointer underline text-white p-2 rounded-xl"
+                    >
+                        Upload my own map
+                    </label>
+                    <input type="file" id="bgImageUpload" accept="image/*" className="hidden" />
+                </div>
             </div>
-            <div id="cy" ref={cyRef} style={{ position: 'fixed', top: '0', right: '0', bottom: '0', left: '0', zIndex: '1' }} className="dark:bg-slate-800"></div>
+            <div id="cy" ref={cyRef} style={{ position: 'fixed', top: '0', right: '0', bottom: '0', left: '0', zIndex: '1' }} className="bg-slate-800"></div>
         </div>
     );
 };
