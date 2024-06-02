@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "cytoscape": "^3.29.2",
+    "cytoscape-canvas": "^3.0.1",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.21.2",
+    "@types/cytoscape-canvas": "^3.0.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
