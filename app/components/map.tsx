@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cytoscape from 'cytoscape';
 import cyCanvas from 'cytoscape-canvas';
 
@@ -23,9 +23,9 @@ const Map: React.FC = () => {
                         selector: 'node',
                         style: {
                             'background-color': '#0074D9',
-                            'width': '10px', // Adjust as needed
-                            'height': '10px', // Adjust as needed
-                            'label': '', // Remove the label
+                            'width': '10px',
+                            'height': '10px',
+                            'label': '',
                             'color': '#fff',
                             'text-valign': 'center',
                             'text-halign': 'center',
@@ -81,52 +81,6 @@ const Map: React.FC = () => {
 
             let nodeId = 0;
             let edgeId = 0;
-            let creatingEdges = false;
-            let isGraphLocked = false;
-
-            document.getElementById('nodeModeBtn')?.addEventListener('click', () => {
-                creatingEdges = !creatingEdges;
-                const btn = document.getElementById('nodeModeBtn');
-                if (btn) {
-                    btn.textContent = creatingEdges ? 'Switch to Node Mode' : 'Switch to Edge Mode';
-                }
-            });
-
-            document.getElementById('lockGraphBtn')?.addEventListener('click', () => {
-                isGraphLocked = !isGraphLocked;
-                const btn = document.getElementById('lockGraphBtn');
-                if (btn) {
-                    btn.textContent = isGraphLocked ? 'Unlock Graph' : 'Lock Graph';
-                }
-                cy.autoungrabify(isGraphLocked);
-            });
-
-            document.getElementById('shortestPathBtn')?.addEventListener('click', () => {
-                const sourceNodeId = (document.getElementById('sourceNodeSelect') as HTMLSelectElement).value;
-                const targetNodeId = (document.getElementById('targetNodeSelect') as HTMLSelectElement).value;
-                if (!sourceNodeId || !targetNodeId) {
-                    alert('Please select both source and target nodes.');
-                    return;
-                }
-
-                const sourceNode = cy.getElementById(sourceNodeId);
-                const targetNode = cy.getElementById(targetNodeId);
-
-                const aStarResult = cy.elements().aStar({
-                    root: sourceNode,
-                    goal: targetNode,
-                    weight: edge => parseFloat(edge.data('label')) || 1
-                });
-
-                if (aStarResult.found) {
-                    cy.elements().removeClass('highlighted');
-                    aStarResult.path.forEach(element => {
-                        element.addClass('highlighted');
-                    });
-                } else {
-                    alert('No path found!');
-                }
-            });
 
             document.getElementById('bgImageUpload')?.addEventListener('change', (event) => {
                 const file = (event.target as HTMLInputElement).files?.[0];
@@ -147,50 +101,82 @@ const Map: React.FC = () => {
                 }
             });
 
+            let mode = 'node';
+            document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+                radio.addEventListener('change', (event) => {
+                    mode = (event.target as HTMLInputElement).value;
+                });
+            });
+            let clickedNodes: string[] = [];
+
             cy.on('tap', (event) => {
-                if (isGraphLocked) return;
-
-                if (creatingEdges) {
-                    if (event.target === cy) return;
-                    const sourceNode = event.target;
-                    const targetNode = cy.$(':selected');
-                    if (targetNode.length === 0) {
-                        return;
-                    }
-                    if (sourceNode.id() === targetNode.id()) {
-                        alert('Cannot create an edge to the same node.');
-                        return;
-                    }
-                    const existingEdge = cy.edges().filter(edge => {
-                        return (edge.data('source') === sourceNode.id() && edge.data('target') === targetNode.id()) ||
-                            (edge.data('source') === targetNode.id() && edge.data('target') === sourceNode.id());
-                    });
-                    if (existingEdge.length > 0) {
-                        alert('An edge already exists between these nodes.');
-                        return;
-                    }
-                    const distance = calculateDistance(sourceNode, targetNode);
-
-                    cy.add({
-                        group: 'edges',
-                        data: { id: 'edge' + edgeId++, source: sourceNode.id(), target: targetNode.id(), label: distance },
-                        classes: 'autorotate'
-                    });
-                } else {
-                    if (event.target === cy) {
-                        const position = event.position;
-                        cy.add({
-                            group: 'nodes',
-                            data: { id: 'node' + nodeId++ },
-                            position: { x: position.x, y: position.y }
+                switch (mode) {
+                    case 'edge':
+                        if (event.target === cy) return;
+                        const sourceNode = event.target;
+                        const targetNode = cy.$(':selected');
+                        if (targetNode.length === 0) {
+                            break;
+                        }
+                        if (sourceNode.id() === targetNode.id()) {
+                            alert('Cannot create an edge to the same node.');
+                            break;
+                        }
+                        const existingEdge = cy.edges().filter(edge => {
+                            return (edge.data('source') === sourceNode.id() && edge.data('target') === targetNode.id()) ||
+                                (edge.data('source') === targetNode.id() && edge.data('target') === sourceNode.id());
                         });
-                        updateNodeSelectors();
-                    }
+                        if (existingEdge.length > 0) {
+                            alert('An edge already exists between these nodes.');
+                            break;
+                        }
+                        const distance = calculateDistance(sourceNode, targetNode);
+
+                        cy.add({
+                            group: 'edges',
+                            data: { id: 'edge' + edgeId++, source: sourceNode.id(), target: targetNode.id(), label: distance },
+                            classes: 'autorotate'
+                        });
+                        break;
+                    case 'node':
+                        if (event.target === cy) {
+                            const position = event.position;
+                            cy.add({
+                                group: 'nodes',
+                                data: { id: 'node' + nodeId++ },
+                                position: { x: position.x, y: position.y }
+                            });
+                        }
+                        break;
+                    case 'shortestPath':
+                        if (event.target === cy) return;
+                        clickedNodes.push(event.target.id());
+
+                        if (clickedNodes.length === 3) {
+                            clickedNodes.shift();
+                        }
+
+                        if (clickedNodes.length === 2) {
+                            const aStarResult = cy.elements().aStar({
+                                root: cy.getElementById(clickedNodes[0]),
+                                goal: cy.getElementById(clickedNodes[1]),
+                                weight: edge => parseFloat(edge.data('label')) || 1
+                            });
+
+                            if (aStarResult.found) {
+                                cy.elements().removeClass('highlighted');
+                                aStarResult.path.forEach(element => {
+                                    element.addClass('highlighted');
+                                });
+                            } else {
+                                cy.elements().removeClass('highlighted');
+                            }
+                        }
+                        break;
                 }
             });
 
             cy.on('dragfree', 'node', (event) => {
-                if (isGraphLocked) return;
                 const node = event.target;
                 node.connectedEdges().forEach((edge: cytoscape.EdgeSingular) => {
                     const sourceNode = cy.getElementById(edge.data('source'));
@@ -209,39 +195,26 @@ const Map: React.FC = () => {
                 ).toFixed(2);
             }
 
-            function updateNodeSelectors() {
-                const sourceNodeSelect = document.getElementById('sourceNodeSelect') as HTMLSelectElement;
-                const targetNodeSelect = document.getElementById('targetNodeSelect') as HTMLSelectElement;
-                sourceNodeSelect.innerHTML = '<option value="">Select Source Node</option>';
-                targetNodeSelect.innerHTML = '<option value="">Select Target Node</option>';
-                cy.nodes().forEach(node => {
-                    if (node.id() !== 'bg') {  // Exclude the background image node
-                        const option = document.createElement('option');
-                        option.value = node.id();
-                        option.text = node.id();
-                        sourceNodeSelect.appendChild(option);
-                        targetNodeSelect.appendChild(option.cloneNode(true));
-                    }
-                });
-            }
-            updateNodeSelectors();
-
         };
     }, []);
 
     return (
         <div className="flex flex-col items-center">
             <div id="controls" className="flex flex-wrap justify-center space-x-4 mb-4 controls bg-transparent">
-                <button id="nodeModeBtn" className="px-4 py-2 bg-blue-500 text-white rounded">Switch to Edge Mode</button>
-                <button id="lockGraphBtn" className="px-4 py-2 bg-blue-500 text-white rounded">Lock Graph</button>
-                <select id="sourceNodeSelect" className="px-4 py-2 border rounded text-black">
-                    <option value="">Select Source Node</option>
-                </select>
-                <select id="targetNodeSelect" className="px-4 py-2 border rounded text-black">
-                    <option value="">Select Target Node</option>
-                </select>
-                <button id="shortestPathBtn" className="px-4 py-2 bg-green-500 text-white rounded">Find Shortest Path</button>
-                <label htmlFor="bgImageUpload" className="px-4 py-2 bg-gray-500 text-white rounded cursor-pointer">Upload Background</label>
+                <fieldset>
+                    <div>
+                        <input type="radio" id="nodeMode" name="mode" value="node" />
+                        <label htmlFor="nodeMode">Create Nodes</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="edgeMode" name="mode" value="edge" />
+                        <label htmlFor="edgeMode">Create Edges</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" />
+                        <label htmlFor="shortestPathMode">Find Shortest Path</label>
+                    </div>
+                </fieldset>
                 <label
                     htmlFor="bgImageUpload"
                     className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
