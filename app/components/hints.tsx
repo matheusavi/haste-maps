@@ -21,7 +21,8 @@ export default function Hints() {
                                             <li>Use the "Create Nodes" option to create nodes at intersections.</li>
                                             <li>Use the "Create Edges" option to represent streets by connecting nodes.</li>
                                             <li>With the "Shortest Path" option selected, you can see the shortest route between the nodes you select.</li>
-                                            <li>You can also upload any map you like to have your own GPS.</li>
+                                            <li>With the "Delete Method" option selected, you can delete nodes and edges.</li>
+                                            <li>You can also upload any map you like to use your own GPS.</li>
                                         </ul>
                                     </div>
                                 </div>

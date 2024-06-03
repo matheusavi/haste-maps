@@ -90,15 +90,14 @@ const Map: React.FC = () => {
             });
 
             document.getElementById('bgImageUpload')?.addEventListener('change', (event) => {
+                window.localStorage.removeItem('savedlayout');
                 const file = (event.target as HTMLInputElement).files?.[0];
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const imgUrl = e.target?.result as string;
                     const img = new Image();
                     img.onload = () => {
-
                         background.src = imgUrl;
-
                         cy.trigger('render');
                     };
                     img.src = imgUrl;
@@ -134,7 +133,6 @@ const Map: React.FC = () => {
                                 (edge.data('source') === targetNode.id() && edge.data('target') === sourceNode.id());
                         });
                         if (existingEdge.length > 0) {
-                            alert('An edge already exists between these nodes.');
                             break;
                         }
                         const distance = calculateDistance(sourceNode, targetNode);
@@ -180,6 +178,10 @@ const Map: React.FC = () => {
                             }
                         }
                         break;
+                    case 'delete':
+                        if (event.target === cy) return;
+                        event.target.remove();
+                        break;
                 }
             });
 
@@ -208,7 +210,7 @@ const Map: React.FC = () => {
             }
 
         };
-        const intervalId = setInterval(saveLayout, 60 * 1000);
+        const intervalId = setInterval(saveLayout, 30 * 1000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -225,6 +227,9 @@ const Map: React.FC = () => {
 
                         <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" className="hidden peer/shortestPath" />
                         <label htmlFor="shortestPathMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/shortestPath:bg-slate-800 rounded-xl p-2">Find Shortest Path</label>
+
+                        <input type="radio" id="deleteMode" name="mode" value="delete" className="hidden peer/delete" />
+                        <label htmlFor="deleteMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/delete:bg-slate-800 rounded-xl p-2">Delete Mode</label>
                     </fieldset>
                 </div>
                 <div className="mt-1">
