@@ -3,12 +3,21 @@ import React, { useEffect, useRef } from 'react';
 import Hints from './hints';
 import cytoscape from 'cytoscape';
 import cyCanvas from 'cytoscape-canvas';
+import { v4 as uuidv4 } from 'uuid';
 
 
 cyCanvas(cytoscape);
 
 const Map: React.FC = () => {
     const cyRef = useRef<HTMLDivElement>(null);
+
+    let cy: cytoscape.Core;
+    const saveLayout = () => {
+        if (cy != null) {
+            console.log('saving layout...');
+            window.localStorage.setItem('savedlayout', JSON.stringify(cy.json()));
+        }
+    };
 
     useEffect(() => {
         if (!cyRef.current) return;
@@ -17,7 +26,7 @@ const Map: React.FC = () => {
         background.src = './pmap.png';
 
         background.onload = () => {
-            const cy = cytoscape({
+            cy = cytoscape({
                 container: cyRef.current,
                 style: [
                     {
@@ -80,9 +89,6 @@ const Map: React.FC = () => {
                 ctx.restore();
             });
 
-            let nodeId = 0;
-            let edgeId = 0;
-
             document.getElementById('bgImageUpload')?.addEventListener('change', (event) => {
                 const file = (event.target as HTMLInputElement).files?.[0];
                 const reader = new FileReader();
@@ -135,7 +141,7 @@ const Map: React.FC = () => {
 
                         cy.add({
                             group: 'edges',
-                            data: { id: 'edge' + edgeId++, source: sourceNode.id(), target: targetNode.id(), label: distance },
+                            data: { id: uuidv4(), source: sourceNode.id(), target: targetNode.id(), label: distance },
                             classes: 'autorotate'
                         });
                         break;
@@ -144,7 +150,7 @@ const Map: React.FC = () => {
                             const position = event.position;
                             cy.add({
                                 group: 'nodes',
-                                data: { id: 'node' + nodeId++ },
+                                data: { id: uuidv4() },
                                 position: { x: position.x, y: position.y }
                             });
                         }
@@ -187,6 +193,11 @@ const Map: React.FC = () => {
                 });
             });
 
+            let stored = window.localStorage.getItem('savedlayout');
+            if (stored != null) {
+                cy.json(JSON.parse(stored));
+            }
+
             function calculateDistance(node1: cytoscape.NodeSingular, node2: cytoscape.NodeSingular): string {
                 const position1 = node1.position();
                 const position2 = node2.position();
@@ -197,6 +208,9 @@ const Map: React.FC = () => {
             }
 
         };
+        const intervalId = setInterval(saveLayout, 60 * 1000);
+
+        return () => clearInterval(intervalId);
     }, []);
     return (
         <div className="flex flex-col items-center">
