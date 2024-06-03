@@ -5,7 +5,6 @@ import cytoscape from 'cytoscape';
 import cyCanvas from 'cytoscape-canvas';
 import { v4 as uuidv4 } from 'uuid';
 
-
 cyCanvas(cytoscape);
 
 const Map: React.FC = () => {
@@ -16,6 +15,21 @@ const Map: React.FC = () => {
         if (cy != null) {
             console.log('saving layout...');
             window.localStorage.setItem('savedlayout', JSON.stringify(cy.json()));
+        }
+    };
+
+    const setDefaultData = async () => {
+        if (window.confirm('Are you sure you want to restore the default data? This will overwrite your current data.')) {
+            try {
+                const response = await fetch('/example.json');
+                const data = await response.json();
+                window.localStorage.setItem('savedlayout', JSON.stringify(data));
+                if (cy) {
+                    cy.json(data);
+                }
+            } catch (error) {
+                console.error('Error fetching default data:', error);
+            }
         }
     };
 
@@ -240,6 +254,14 @@ const Map: React.FC = () => {
                         Upload my own map
                     </label>
                     <input type="file" id="bgImageUpload" accept="image/*" className="hidden" />
+                </div>
+                <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+                    <button
+                        onClick={setDefaultData}
+                        className="cursor-pointer text-white p-2 rounded-xl bg-sky-500/30"
+                    >
+                        🔃
+                    </button>
                 </div>
             </div>
             <Hints />
