@@ -21,7 +21,8 @@ export default function Hints() {
                                             <li>Use the "Create Nodes" option to create nodes at intersections.</li>
                                             <li>Use the "Create Edges" option to represent streets by connecting nodes.</li>
                                             <li>With the "Shortest Path" option selected, you can see the shortest route between the nodes you select.</li>
-                                            <li>You can also upload any map you like to have your own GPS.</li>
+                                            <li>With the "Delete Method" option selected, you can delete nodes and edges.</li>
+                                            <li>You can also upload any map you like to use your own GPS.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -29,7 +30,7 @@ export default function Hints() {
                             <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                                 <button
                                     type="button"
-                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-xs font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-xs"
+                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-sky-500/30 text-xs font-medium text-white hover:bg-slate-800 focus:outline-none sm:ml-3 sm:w-auto sm:text-xs"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     Close

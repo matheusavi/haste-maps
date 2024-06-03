@@ -3,12 +3,35 @@ import React, { useEffect, useRef } from 'react';
 import Hints from './hints';
 import cytoscape from 'cytoscape';
 import cyCanvas from 'cytoscape-canvas';
-
+import { v4 as uuidv4 } from 'uuid';
 
 cyCanvas(cytoscape);
 
 const Map: React.FC = () => {
     const cyRef = useRef<HTMLDivElement>(null);
+
+    let cy: cytoscape.Core;
+    const saveLayout = () => {
+        if (cy != null) {
+            console.log('saving layout...');
+            window.localStorage.setItem('savedlayout', JSON.stringify(cy.json()));
+        }
+    };
+
+    const setDefaultData = async () => {
+        if (window.confirm('Are you sure you want to restore the default data? This will overwrite your current data.')) {
+            try {
+                const response = await fetch('/example.json');
+                const data = await response.json();
+                window.localStorage.setItem('savedlayout', JSON.stringify(data));
+                if (cy) {
+                    cy.json(data);
+                }
+            } catch (error) {
+                console.error('Error fetching default data:', error);
+            }
+        }
+    };
 
     useEffect(() => {
         if (!cyRef.current) return;
@@ -17,7 +40,7 @@ const Map: React.FC = () => {
         background.src = './pmap.png';
 
         background.onload = () => {
-            const cy = cytoscape({
+            cy = cytoscape({
                 container: cyRef.current,
                 style: [
                     {
@@ -80,19 +103,15 @@ const Map: React.FC = () => {
                 ctx.restore();
             });
 
-            let nodeId = 0;
-            let edgeId = 0;
-
             document.getElementById('bgImageUpload')?.addEventListener('change', (event) => {
+                window.localStorage.removeItem('savedlayout');
                 const file = (event.target as HTMLInputElement).files?.[0];
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const imgUrl = e.target?.result as string;
                     const img = new Image();
                     img.onload = () => {
-
                         background.src = imgUrl;
-
                         cy.trigger('render');
                     };
                     img.src = imgUrl;
@@ -128,14 +147,13 @@ const Map: React.FC = () => {
                                 (edge.data('source') === targetNode.id() && edge.data('target') === sourceNode.id());
                         });
                         if (existingEdge.length > 0) {
-                            alert('An edge already exists between these nodes.');
                             break;
                         }
                         const distance = calculateDistance(sourceNode, targetNode);
 
                         cy.add({
                             group: 'edges',
-                            data: { id: 'edge' + edgeId++, source: sourceNode.id(), target: targetNode.id(), label: distance },
+                            data: { id: uuidv4(), source: sourceNode.id(), target: targetNode.id(), label: distance },
                             classes: 'autorotate'
                         });
                         break;
@@ -144,7 +162,7 @@ const Map: React.FC = () => {
                             const position = event.position;
                             cy.add({
                                 group: 'nodes',
-                                data: { id: 'node' + nodeId++ },
+                                data: { id: uuidv4() },
                                 position: { x: position.x, y: position.y }
                             });
                         }
@@ -174,6 +192,10 @@ const Map: React.FC = () => {
                             }
                         }
                         break;
+                    case 'delete':
+                        if (event.target === cy) return;
+                        event.target.remove();
+                        break;
                 }
             });
 
@@ -187,6 +209,11 @@ const Map: React.FC = () => {
                 });
             });
 
+            let stored = window.localStorage.getItem('savedlayout');
+            if (stored != null) {
+                cy.json(JSON.parse(stored));
+            }
+
             function calculateDistance(node1: cytoscape.NodeSingular, node2: cytoscape.NodeSingular): string {
                 const position1 = node1.position();
                 const position2 = node2.position();
@@ -197,13 +224,16 @@ const Map: React.FC = () => {
             }
 
         };
+        const intervalId = setInterval(saveLayout, 30 * 1000);
+
+        return () => clearInterval(intervalId);
     }, []);
     return (
         <div className="flex flex-col items-center">
             <div id="controls" className="flex flex-wrap justify-center space-x-5 mb-4 controls bg-slate-500 p-4 rounded-xl shadow-md">
                 <div className="mt-1">
                     <fieldset className="text-white">
-                        <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" />
+                        <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" defaultChecked />
                         <label htmlFor="nodeMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/node:bg-slate-800 rounded-xl p-2">Create Nodes</label>
 
                         <input type="radio" id="edgeMode" name="mode" value="edge" className="hidden peer/edge" />
@@ -211,6 +241,9 @@ const Map: React.FC = () => {
 
                         <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" className="hidden peer/shortestPath" />
                         <label htmlFor="shortestPathMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/shortestPath:bg-slate-800 rounded-xl p-2">Find Shortest Path</label>
+
+                        <input type="radio" id="deleteMode" name="mode" value="delete" className="hidden peer/delete" />
+                        <label htmlFor="deleteMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/delete:bg-slate-800 rounded-xl p-2">Delete Mode</label>
                     </fieldset>
                 </div>
                 <div className="mt-1">
@@ -221,6 +254,14 @@ const Map: React.FC = () => {
                         Upload my own map
                     </label>
                     <input type="file" id="bgImageUpload" accept="image/*" className="hidden" />
+                </div>
+                <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+                    <button
+                        onClick={setDefaultData}
+                        className="cursor-pointer text-white p-2 rounded-xl bg-sky-500/30"
+                    >
+                        🔃
+                    </button>
                 </div>
             </div>
             <Hints />
