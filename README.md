@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Haste Maps
+
+Haste Maps lets you upload your maps and create your own GPS for RPG campaigns.
+
+## How It Works
+
+1. **Mark Intersections and Roads**: Identify intersections as nodes and roads as edges.
+2. **Build the Map**: Once your map is built, use the shortest path button to find the best routes.
+3. **Local Save**: The last map you made will be saved locally for easy access.
+
+**Example:**  
+![a](https://github.com/matheusavi/haste-maps/assets/26263503/cf743d53-ba76-4814-8046-c4043a452d01)
+
+
+You can visit the app at [Haste Maps](https://matheusavi.github.io/).
+
+## Motivation
+
+While playing the [Drakkenheim campaign](https://ghostfiregaming.com/dungeons-of-drakkenheim/) last weekend, I felt confused deciding our path during the journey. Since I was studying graph algorithms at the time, I thought, why not combine both?
+
+## Technologies Used
+
+This is a weekend project made using:
+
+- [Cytoscape.js](https://js.cytoscape.org/)
+- [React](https://react.dev/)
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+The application runs on the client side and utilizes both TypeScript and JavaScript for some Cytoscape functionalities.
 
 ## Getting Started
 
-First, run the development server:
+To run the project locally, execute the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Feel free to adjust any details or links as needed!
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
