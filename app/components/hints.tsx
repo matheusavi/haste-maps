@@ -18,10 +18,10 @@ export default function Hints() {
                                             Instructions
                                         </h3>
                                         <ul className="list-decimal px-5">
-                                            <li>Use the "Create Nodes" option to create nodes at intersections.</li>
-                                            <li>Use the "Create Edges" option to represent streets by connecting nodes.</li>
-                                            <li>With the "Shortest Path" option selected, you can see the shortest route between the nodes you select.</li>
-                                            <li>With the "Delete Method" option selected, you can delete nodes and edges.</li>
+                                            <li>Use the &quot;Create Nodes&quot; option to create nodes at intersections.</li>
+                                            <li>Use the &quot;Create Edges&quot; option to represent streets by connecting nodes.</li>
+                                            <li>With the &quot;Shortest Path&quot; option selected, you can see the shortest route between the nodes you select.</li>
+                                            <li>With the &quot;Delete Method&quot; option selected, you can delete nodes and edges.</li>
                                             <li>You can also upload any map you like to use your own GPS.</li>
                                         </ul>
                                     </div>
