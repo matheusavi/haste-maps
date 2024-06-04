@@ -34,6 +34,7 @@ The application runs on the client side and utilizes both TypeScript and JavaScr
 To run the project locally, execute the following command:
 
 ```bash
+npm install
 npm run dev
 ```
 

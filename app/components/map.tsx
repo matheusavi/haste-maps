@@ -37,7 +37,12 @@ const Map: React.FC = () => {
         if (!cyRef.current) return;
 
         const background = new Image();
-        background.src = './pmap.png';
+        const savedCanvasImage = window.localStorage.getItem('savedCanvasImage');
+        if (savedCanvasImage) {
+            background.src = savedCanvasImage;
+        } else {
+            background.src = './pmap.png';
+        }
 
         background.onload = () => {
             cy = cytoscape({
@@ -113,6 +118,7 @@ const Map: React.FC = () => {
                     img.onload = () => {
                         background.src = imgUrl;
                         cy.trigger('render');
+                        window.localStorage.setItem('savedCanvasImage', imgUrl);
                     };
                     img.src = imgUrl;
                 };
