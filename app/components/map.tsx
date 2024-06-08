@@ -236,23 +236,19 @@ const Map: React.FC = () => {
     }, []);
     return (
         <div className="flex flex-col items-center">
-            <div id="controls" className="flex flex-wrap justify-center space-x-5 mb-4 controls bg-slate-500 p-4 rounded-xl shadow-md">
-                <div className="mt-1">
-                    <fieldset className="text-white">
-                        <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" defaultChecked />
-                        <label htmlFor="nodeMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/node:bg-slate-800 rounded-xl p-2">Create Nodes</label>
+            <div id="controls" className="flex flex-wrap justify-between p-2 gap-2 controls bg-slate-500 rounded-xl shadow-md text-white">
+                <input type="radio" id="nodeMode" name="mode" value="node" className="hidden peer/node" defaultChecked />
+                <label htmlFor="nodeMode" className="cursor-pointer bg-sky-500/30 peer-checked/node:bg-slate-800 rounded-xl p-2">Create Nodes</label>
 
-                        <input type="radio" id="edgeMode" name="mode" value="edge" className="hidden peer/edge" />
-                        <label htmlFor="edgeMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/edge:bg-slate-800 rounded-xl p-2">Create Edges</label>
+                <input type="radio" id="edgeMode" name="mode" value="edge" className="hidden peer/edge" />
+                <label htmlFor="edgeMode" className="cursor-pointer bg-sky-500/30 peer-checked/edge:bg-slate-800 rounded-xl p-2">Create Edges</label>
 
-                        <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" className="hidden peer/shortestPath" />
-                        <label htmlFor="shortestPathMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/shortestPath:bg-slate-800 rounded-xl p-2">Find Shortest Path</label>
+                <input type="radio" id="shortestPathMode" name="mode" value="shortestPath" className="hidden peer/shortestPath" />
+                <label htmlFor="shortestPathMode" className="cursor-pointer bg-sky-500/30 peer-checked/shortestPath:bg-slate-800 rounded-xl p-2">Find Shortest Path</label>
 
-                        <input type="radio" id="deleteMode" name="mode" value="delete" className="hidden peer/delete" />
-                        <label htmlFor="deleteMode" className="mr-4 cursor-pointer bg-sky-500/30 peer-checked/delete:bg-slate-800 rounded-xl p-2">Delete Mode</label>
-                    </fieldset>
-                </div>
-                <div className="mt-1">
+                <input type="radio" id="deleteMode" name="mode" value="delete" className="hidden peer/delete" />
+                <label htmlFor="deleteMode" className="cursor-pointer bg-sky-500/30 peer-checked/delete:bg-slate-800 rounded-xl p-2">Delete Mode</label>
+                <div className="pt-2">
                     <label
                         htmlFor="bgImageUpload"
                         className="cursor-pointer underline text-white p-2 rounded-xl"
